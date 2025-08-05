@@ -6,8 +6,11 @@ import Search from './components/Search';
 import Header from './components/Header';
 
 function App() {
-  const [notes, setNotes] = useState([
-    {
+
+  const LOCAL_STORAGE_KEY = "react-notes-app";
+  const [notes, setNotes] = useState(() => {
+    const savedNotes = localStorage.getItem(LOCAL_STORAGE_KEY)
+    return savedNotes ? JSON.parse(savedNotes) : [{
       id : nanoid(),
       text : "This is my first note",
       date : "01/08/2025"
@@ -21,30 +24,17 @@ function App() {
       id : nanoid(),
       text : "This is my third note",
       date : "01/08/2025"
-    }
-  ]);
+    }]
+  })
+
 
   const [darkMode, setDarkMode] = useState(false);
   const [searchText, setSearchText] = useState("");
 
 
-  const LOCAL_STORAGE_KEY = "react-notes-app";
-
-  useEffect(() => {
-    try {
-      const savedNotes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-      if (savedNotes && Array.isArray(savedNotes)) {
-        setNotes(savedNotes);
-      }
-    } catch (error) {
-      console.error("Error reading localStorage", error);
-    }
-  }, []);
-
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
   }, [notes]);
-
 
 
   const addNote = (text) => {
@@ -63,7 +53,13 @@ function App() {
     const newNotes = notes.filter((note) => note.id !== id);
     setNotes(newNotes);
   };
-
+  
+  const handleEditNote = (id, newText) => {
+    const updatedNotes = notes.map((note)=>
+      note.id === id ? {...note, text : newText} : note
+    )
+    setNotes(updatedNotes);
+  }
 
   return(
     <div>
@@ -74,6 +70,7 @@ function App() {
               notes = {notes.filter((note) => note.text.toLowerCase().includes(searchText))}
               handleAddNote={addNote}
 					    handleDeleteNote={deleteNote}
+              handleEditNote={handleEditNote}
         />
       </div>
     </div>
