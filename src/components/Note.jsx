@@ -45,3 +45,4 @@ export default function Note({id, text, date, handleDeleteNote, handleEditNote})
         </div>
     )
 }
+

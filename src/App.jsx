@@ -31,6 +31,13 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [searchText, setSearchText] = useState("");
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
@@ -61,10 +68,26 @@ function App() {
     setNotes(updatedNotes);
   }
 
+  const handleExportNotes = () =>{
+    const fileData = notes.map(note => `${note.date}:\n${note.text}\n\n`).join("");
+    const blob = new Blob([fileData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "my-notes.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);    
+  }
+
   return(
-    <div>
-      <div >
-        <Header handleToggleDarkMode = {setDarkMode}/>
+    
+      <div>
+        <Header handleToggleDarkMode = {setDarkMode}
+                handleExportNotes={handleExportNotes}
+                darkMode = {darkMode}
+                />
         <Search HandleTextSearch = {setSearchText}/>
         <NotesList 
               notes = {notes.filter((note) => note.text.toLowerCase().includes(searchText))}
@@ -73,7 +96,7 @@ function App() {
               handleEditNote={handleEditNote}
         />
       </div>
-    </div>
+   
   )
 }
 
