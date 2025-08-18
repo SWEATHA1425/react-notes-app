@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+
+h1 {
+  color: rgb(21, 165, 190);
+}
+
+body {
+  margin: 0;
+  background-color: white;
+  color: black;
+  min-height: 100vh;
+}
+
+/* Dark mode applied globally */
+body.dark-mode {
+  background-color: #121212;
+  color: black;
+}
+
